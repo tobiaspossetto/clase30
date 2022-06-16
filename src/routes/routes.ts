@@ -4,7 +4,9 @@ import { isAuth, apiAuth } from '../middleware/auth'
 import passport from 'passport'
 import randomController from '../controllers/randomController'
 import { PORT } from '../app'
+
 import minimist from 'minimist'
+const numCPUs = require('os').cpus().length
 const router = Router()
 export const args = minimist(process.argv.slice(2))
 // VISTAS WEB
@@ -72,23 +74,11 @@ router.get('/signInError', (req, res) => {
   res.render('failSignin.pug', { msg: req.session.messages[req.session.messages.length - 1] })
 })
 
-router.get('/randoms', randomController.randoms)
+router.get('/api/randoms', randomController.randoms)
 
-router.get('/info', (req: Request, res: Response) => {
-  res.send({
-    args: process.argv.slice(2).join(' - '),
-    OSName: process.platform,
-    nodeVersion: process.version,
-    usageOfMemory: process.memoryUsage(),
-    execPath: process.execPath,
-    PID: process.pid,
-    folder: process.cwd()
-  })
-})
-
-router.get('/datos', function (req: any, res: { send: (arg0: string) => void }) {
+router.get('/info', function (req: any, res: { send: (arg0: string) => void }) {
   console.log(`port: ${PORT} -> Fyh: ${Date.now()} `)
-  res.send(args._[0] + `Servidor express <span style="color:blueviolet;">(Nginx)</span> en ${PORT} - <b>PID ${process.pid}</b> - ${new Date().toLocaleString()}`)
+  res.send(args._[0] + `Procesadores=  ${numCPUs} Servidor express <span style="color:blueviolet;">(Nginx)</span> en ${PORT} - <b>PID ${process.pid}</b> - ${new Date().toLocaleString()}`)
 })
 
 export default router
