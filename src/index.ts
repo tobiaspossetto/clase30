@@ -6,13 +6,13 @@ import sockets from './socket/sockets'
 import cluster from 'cluster'
 const numCPUs = require('os').cpus().length
 
-if (cluster.isMaster) {
+if (args._[1] === 'CLUSTER' && cluster.isMaster) {
   console.log(`I am a master ${process.pid}`)
   for (let i = 0; i < numCPUs; i++) {
     cluster.fork()
   }
-  cluster.on('listening', (worker, address) => {
-    console.log(`${worker.process.pid} es listening in port ${address.port}`)
+  cluster.on('exit', function (worker, code, signal) {
+    console.log('worker ' + worker.process.pid + ' died')
   })
 } else {
   const server = http.createServer(app)
